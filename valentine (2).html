@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Floating hearts background */
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: float 10s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 60px 80px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+            position: relative;
+            z-index: 10;
+            max-width: 90vw;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+                max-width: 95vw;
+            }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ff1493;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+            
+            h2 {
+                font-size: 1.3em !important;
+            }
+            
+            .emoji {
+                font-size: 3em !important;
+                margin-bottom: 15px !important;
+            }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            position: relative;
+            height: 80px;
+        }
+
+        button {
+            padding: 20px 50px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 180px;
+            height: 70px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            button {
+                width: 140px;
+                height: 60px;
+                font-size: 1.2em;
+                padding: 15px 30px;
+            }
+            
+            .button-container {
+                gap: 20px;
+                height: 70px;
+            }
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c239b3 100%);
+            color: white;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #d3d3d3 0%, #a9a9a9 100%);
+            color: white;
+            position: absolute;
+            transition: none;
+        }
+
+        #noBtn:hover {
+            background: linear-gradient(135deg, #c0c0c0 0%, #909090 100%);
+        }
+
+        .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        /* Audio control styling */
+        audio {
+            margin-top: 20px;
+            width: 300px;
+        }
+
+        .audio-note {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts -->
+    <div class="heart" style="left: 10%; top: 20%; animation-delay: 0s;">💕</div>
+    <div class="heart" style="left: 85%; top: 30%; animation-delay: 2s;">💖</div>
+    <div class="heart" style="left: 20%; top: 70%; animation-delay: 4s;">💗</div>
+    <div class="heart" style="left: 75%; top: 60%; animation-delay: 3s;">💝</div>
+    <div class="heart" style="left: 50%; top: 10%; animation-delay: 1s;">💓</div>
+
+    <div class="container">
+        <div class="emoji">🌹</div>
+        <h1>PRESHITA! 💕</h1>
+        <h2 style="font-size: 1.8em; color: #ff69b4;">Will you be my Valentine?</h2>
+        
+        <div class="button-container">
+            <button id="yesBtn">Yes! 💖</button>
+            <button id="noBtn">No</button>
+        </div>
+
+        <audio id="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="audio-note">🎵 Tap anywhere to start music</div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const container = document.querySelector('.container');
+        const audioNote = document.querySelector('.audio-note');
+        let musicStarted = false;
+
+        // Function to start music
+        function startMusic() {
+            if (!musicStarted) {
+                bgMusic.play().then(() => {
+                    musicStarted = true;
+                    audioNote.textContent = '🎵 Music playing';
+                    audioNote.style.color = '#4CAF50';
+                }).catch(err => {
+                    console.log('Music play failed:', err);
+                    audioNote.textContent = '🎵 Tap to play music';
+                });
+            }
+        }
+
+        // Try to play music on page load (won't work on iOS without interaction)
+        window.addEventListener('load', () => {
+            bgMusic.play().then(() => {
+                musicStarted = true;
+                audioNote.textContent = '🎵 Music playing';
+                audioNote.style.color = '#4CAF50';
+            }).catch(err => {
+                console.log('Autoplay prevented. User interaction needed.');
+            });
+        });
+
+        // Start music on first user interaction (required for iOS)
+        document.body.addEventListener('click', startMusic, { once: false });
+        document.body.addEventListener('touchstart', startMusic, { once: false });
+
+        // Set initial position for No button
+        noBtn.style.left = '200px';
+        noBtn.style.top = '0px';
+
+        // Move the No button when mouse gets near - using mouseenter for instant response
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('mousemove', moveNoButton);
+        noBtn.addEventListener('touchstart', moveNoButton);
+
+        function moveNoButton(e) {
+            e.preventDefault();
+            
+            // Random position within safe bounds
+            const maxX = 300;
+            const maxY = 30;
+            const minX = -300;
+            const minY = -30;
+            
+            const randomX = Math.random() * (maxX - minX) + minX;
+            const randomY = Math.random() * (maxY - minY) + minY;
+            
+            // Move instantly without transition
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // Yes button click
+        yesBtn.addEventListener('click', () => {
+            const currentTime = bgMusic.currentTime;
+            container.innerHTML = `
+                <div style="margin-bottom: 30px;">
+                    <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzE5cndhYXlxcHl4cHoxMW9ydWF6N29rZ2h5dDgwa2NwYmJhaTlnNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BY2Y0atRKPeivF6aP2/giphy.gif" alt="Celebration" style="max-width: 100%; max-height: 300px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                </div>
+                <h1 style="color: #ff1493; font-size: 2.5em; margin-top: 20px;">I knew you'd say yes! 💕</h1>
+                <h2 style="color: #ff69b4; margin-top: 20px; font-size: 1.5em;">Happy Valentine's Day! 💖</h2>
+                <audio id="bgMusicNew" loop autoplay>
+                    <source src=""C:\Users\noels\Downloads\transcript_final\Baby where is my husband.m4a"" type="audio/mp4">
+                </audio>
+                <style>
+                    @media (max-width: 768px) {
+                        h1 { font-size: 1.8em !important; }
+                        h2 { font-size: 1.2em !important; }
+                    }
+                </style>
+            `;
+            // Keep the music playing from where it left off
+            const newAudio = document.getElementById('bgMusicNew');
+            newAudio.currentTime = currentTime;
+            newAudio.play().catch(err => console.log('Audio play failed'));
+        });
+
+        // No button click (just in case they manage to click it)
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton(e);
+        });
+    </script>
+</body>
+</html>
